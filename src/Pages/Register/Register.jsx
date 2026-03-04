@@ -2,29 +2,92 @@ import { Eye, EyeOff } from "lucide-react";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
-import * as z from "zod"
-
-
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import ErrorMessages from "../../Components/ErrorMessages/ErrorMessages";
+import { ca } from "zod/locales";
+import axios from "axios";
+const schema = z
+  .object({
+    name: z
+      .string("must be a string")
+      .min(3, "Name must be at least 3 characters")
+      .max(12, "Name must be at most 12 characters"),
+    username: z
+      .string()
+      .min(3, "Username must be at least 3 characters")
+      .max(8, "Username must be at most 8 characters"),
+    email: z.email("Please enter a valid email"),
+    dateOfBirth: z.string().date("Please enter a valid date of birth"),
+    gender: z.enum(["male", "female"], "Please select a valid gender"),
+    password: z
+      .string()
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,10}$/,
+        "Password must contain at least one uppercase letter, one lowercase letter, one number and one special character",
+      ),
+    rePassword: z
+      .string()
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,10}$/,
+        "Passwords must match",
+      ),
+  })
+  .refine(
+    (values) => {
+      if (values.password === values.rePassword) {
+        return true;
+      }
+      return false;
+    },
+    {
+      error: "password should match",
+      path: ["rePassword"],
+    },
+  );
 
 export default function Register() {
   const [isShow, setisShow] = useState(false);
   const [isShowConfirm, setisShowConfirm] = useState(false);
+  const [formerror, setformerror] = useState("");
   const { handleSubmit, register, formState, watch } = useForm({
+    resolver: zodResolver(schema),
     defaultValues: {
       name: "",
+      username: "",
       email: "",
       password: "",
       rePassword: "",
       dateOfBirth: "",
       gender: "",
     },
-    mode:'all'
+    mode: "all",
   });
-  const password = watch("password");
-
-  function sendData(test) {
-    console.log(test);
+ 
+  async function sendData(values) {
+    
+ try { 
+    const {data} = await axios
+    ("https://route-posts.routemisr.com/users/signup",{
+      method:"POST",
+      data:values
+    });
+    console.log(data);
+    }
+    catch (error) {
+      setformerror(error.response.data.message);
+      console.log(error.response.data.message);
   }
+// const {data} = axios
+//    ("https://route-posts.routemisr.com/users/signup",{
+//        method:"POST",
+//        data:values
+//      }).then((response)=>{
+//       console.log(response.data);
+//      }).catch((error)=>{
+//       console.log(error);
+//      });
+}
   function handleShowPassword() {
     setisShow(!isShow);
     setisShowConfirm(!isShowConfirm);
@@ -50,7 +113,7 @@ export default function Register() {
                 className="text-md font-semibold text-gray-800"
                 htmlFor="userName"
               >
-                Username
+                Name
               </label>
               <input
                 className="input mt-1"
@@ -58,17 +121,27 @@ export default function Register() {
                 placeholder="username"
                 name="name"
                 id="userName"
-                {...register("name", {
-                  required: { value: true, message: "this field is required" },
-                  minLength: { value: 3, message: "min length is 3 chars" },
-                  maxLength: { value: 12, message: "max length is 3 chars" },
-                })}
+                {...register("name")}
               />
-              {formState.errors?.name && formState.dirtyFields.name && (
-                <p className="text-red-500 text-sm font-semibold">
-                  {formState.errors.name.message}
-                </p>
-              )}
+              <ErrorMessages title={formState.errors?.name?.message} />
+            </div>
+            {/*username */}
+            <div className="my-4">
+              <label
+                className="text-md font-semibold text-gray-800"
+                htmlFor="username"
+              >
+                Username
+              </label>
+              <input
+                className="input mt-1"
+                type="text"
+                placeholder="display name"
+                id="username"
+                name="username"
+                {...register("username")}
+              />
+              <ErrorMessages title={formState.errors?.username?.message} />
             </div>
             {/*email */}
             <div className="my-4">
@@ -84,19 +157,10 @@ export default function Register() {
                 placeholder="email"
                 id="email"
                 name="email"
-                {...register("email", {
-                  required: { value: true, message: "Email is required" },
-                  pattern: {
-                    value: /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/,
-                    message: "Email must be valid",
-                  },
-                })}
+                {...register("email")}
               />
-              {formState.errors?.email && formState.dirtyFields.email && (
-                <p className="text-red-500 text-sm font-semibold">
-                  {formState.errors.email.message}
-                </p>
-              )}
+
+              <ErrorMessages title={formState.errors?.email?.message} />
             </div>
             {/*password */}
             <div className="my-4">
@@ -113,23 +177,11 @@ export default function Register() {
                   placeholder="password"
                   id="password"
                   name="password"
-                  {...register("password", {
-                    required: {
-                      value: true,
-                      message: "This field is required",
-                    },
-                    pattern: {
-                      value: /^[A-Z][A-Z a-z 0-9 _ ]{4,}$/,
-                      message: "password must be valid",
-                    },
-                  })}
+                  {...register("password")}
                 />
 
-                {formState.errors?.password && (
-                  <p className="text-red-500 text-sm font-semibold">
-                    {formState.errors.password.message}
-                  </p>
-                )}
+                <ErrorMessages title={formState.errors?.password?.message} />
+
                 {isShow ? (
                   <Eye
                     className="absolute top-[50%] translate-y-[-50%] end-3  translate-middle w-5 h-5 text-gray-700 cursor-pointer"
@@ -158,24 +210,10 @@ export default function Register() {
                   placeholder="Confirm password"
                   id="rePassword"
                   name="rePassword"
-                  {...register("rePassword", {
-                    required: {
-                      value: true,
-                      message: "This field is required",
-                    },
-                    validate:(re) => {
-                      return password == re || "pass should match";
-                    }
-                  })}
+                  {...register("rePassword")}
                 />
-                {formState.errors?.rePassword &&
-                  formState.dirtyFields.rePassword && (
-                    <p className="text-red-500 text-sm font-semibold">
-                      {formState.errors.rePassword.message}
-                    </p>
-                    
-                  )}
-                  
+
+                <ErrorMessages title={formState.errors?.rePassword?.message} />
 
                 {isShowConfirm ? (
                   <Eye
@@ -234,6 +272,7 @@ export default function Register() {
                 Female
               </label>
             </div>
+            <p className="text-red-500">{formerror}</p>
             {/*button */}
             <div className="flex justify-center">
               <button className="btn text-white mx-auto text-md font-semibold">

@@ -7,7 +7,7 @@ export default function Layout() {
   return (
     <div>
       <Navbar />
-      <div className="bg-purple-50  py-20"><Outlet/></div>
+      <div className="bg-purple-50  py-10"><Outlet/></div>
       
       <Footer/>
     </div>

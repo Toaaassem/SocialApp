@@ -10,14 +10,19 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@heroui/react": "^2.8.9",
+    "@heroui/theme": "^2.4.26",
     "@hookform/resolvers": "^5.2.2",
     "@tailwindcss/vite": "^4.1.18",
     "axios": "^1.13.6",
+    "framer-motion": "^12.35.0",
     "lucide-react": "^0.563.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.71.1",
     "react-router-dom": "^7.13.0",
+    "react-spinners": "^0.17.0",
+    "react-toastify": "^11.0.5",
     "tailwindcss": "^4.1.18",
     "zod": "^4.3.6"
   },

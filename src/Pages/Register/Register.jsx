@@ -1,12 +1,15 @@
 import { Eye, EyeOff } from "lucide-react";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ErrorMessages from "../../Components/ErrorMessages/ErrorMessages";
 import { ca } from "zod/locales";
 import axios from "axios";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { ClipLoader } from "react-spinners";
 const schema = z
   .object({
     name: z
@@ -49,7 +52,10 @@ const schema = z
 export default function Register() {
   const [isShow, setisShow] = useState(false);
   const [isShowConfirm, setisShowConfirm] = useState(false);
-  const [formerror, setformerror] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  // i can make like enum : one state which is register state can have multiple states laoding | idle | rejected |fulfilled : always idle and using the set i can change it
+  const navigate = useNavigate();
+
   const { handleSubmit, register, formState, watch } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -63,31 +69,39 @@ export default function Register() {
     },
     mode: "all",
   });
- 
+
   async function sendData(values) {
-    
- try { 
-    const {data} = await axios
-    ("https://route-posts.routemisr.com/users/signup",{
-      method:"POST",
-      data:values
-    });
-    console.log(data);
+    setIsLoading(true);
+    try {
+      const { data } = await axios(
+        "https://route-posts.routemisr.com/users/signup",
+        {
+          method: "POST",
+          data: values,
+        },
+      );
+      console.log(data);
+      toast.success("Login successful", {
+        autoClose: 1500,
+      });
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
+    } catch (error) {
+      toast.error(error.response.data.message);
+    } finally {
+      setIsLoading(false);
     }
-    catch (error) {
-      setformerror(error.response.data.message);
-      console.log(error.response.data.message);
+    // const {data} = axios
+    //    ("https://route-posts.routemisr.com/users/signup",{
+    //        method:"POST",
+    //        data:values
+    //      }).then((response)=>{
+    //       console.log(response.data);
+    //      }).catch((error)=>{
+    //       console.log(error);
+    //      });
   }
-// const {data} = axios
-//    ("https://route-posts.routemisr.com/users/signup",{
-//        method:"POST",
-//        data:values
-//      }).then((response)=>{
-//       console.log(response.data);
-//      }).catch((error)=>{
-//       console.log(error);
-//      });
-}
   function handleShowPassword() {
     setisShow(!isShow);
     setisShowConfirm(!isShowConfirm);
@@ -272,11 +286,20 @@ export default function Register() {
                 Female
               </label>
             </div>
-            <p className="text-red-500">{formerror}</p>
             {/*button */}
             <div className="flex justify-center">
-              <button className="btn text-white mx-auto text-md font-semibold">
-                Create an account
+              <button
+                disabled={isLoading}
+                className="btn text-white mx-auto text-md font-semibold"
+              >
+                {isLoading ? (
+                  <div className="flex align-middle justify-center gap-2">
+                    <ClipLoader size={20} color="white" />{" "}
+                    <div className="">Creating ... </div>{" "}
+                  </div>
+                ) : (
+                  "Create an account"
+                )}
               </button>
             </div>
             <p className="text-gray-400 text-sm font-semibold text-center mt-3">

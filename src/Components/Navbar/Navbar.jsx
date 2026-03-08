@@ -57,12 +57,12 @@ navigate('/login')
           {!isLoggedIn && (
             <>
               <NavbarItem>
-                <Link color="foreground" to="/register">
+                <Link color="foreground" className="link" to="/register">
                   Register
                 </Link>
               </NavbarItem>
               <NavbarItem>
-                <Link color="foreground" to="/login">
+                <Link color="foreground" className="link" to="/login">
                   Login
                 </Link>
               </NavbarItem>
@@ -70,7 +70,7 @@ navigate('/login')
           )}
           {isLoggedIn && (
             <NavbarItem>
-              <Link color="foreground" to="/home">
+              <Link color="foreground " className="link" to="/home">
                 Home
               </Link>
             </NavbarItem>
@@ -90,7 +90,9 @@ navigate('/login')
               />
             </DropdownTrigger>
             <DropdownMenu aria-label="Profile Actions" variant="flat">
-              <DropdownItem key="settings">Profile</DropdownItem>
+              <DropdownItem key="settings">
+                <Link to="/profile" className="w-full block">Profile</Link>
+                </DropdownItem>
               <DropdownItem key="logout" color="danger" onClick={handleLogout}>
                 Log Out
               </DropdownItem>

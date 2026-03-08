@@ -14,7 +14,7 @@ import AuthContextProvider from "./Context/AuthContext";
 import Profile from "./Pages/Profile/Profile";
 import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
 import AuthProtectedRoutes from "./Components/AuthProtectedRoutes/AuthProtectedRoutes";
-
+import {QueryClient,QueryClientProvider} from'@tanstack/react-query'
 const routes = createBrowserRouter([
   {
     path: "/",
@@ -28,16 +28,18 @@ const routes = createBrowserRouter([
     ],
   },
 ]);
-
+const queryClientConfig = new QueryClient();
 function App() {
   return (
     <>
+    <QueryClientProvider client={queryClientConfig}>
       <AuthContextProvider>
         <HeroUIProvider>
           <ToastContainer />
           <RouterProvider router={routes} />
         </HeroUIProvider>
       </AuthContextProvider>
+    </QueryClientProvider>
     </>
   );
 }

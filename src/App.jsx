@@ -15,6 +15,7 @@ import Profile from "./Pages/Profile/Profile";
 import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
 import AuthProtectedRoutes from "./Components/AuthProtectedRoutes/AuthProtectedRoutes";
 import {QueryClient,QueryClientProvider} from'@tanstack/react-query'
+import PostDetails from "./Pages/PostDetails/PostDetails";
 const routes = createBrowserRouter([
   {
     path: "/",
@@ -25,6 +26,8 @@ const routes = createBrowserRouter([
       { path: "/login", element: <AuthProtectedRoutes><Login /></AuthProtectedRoutes> },
       { path: "/register", element: <AuthProtectedRoutes><Register /></AuthProtectedRoutes> },
       { path: "/profile", element: <ProtectedRoute><Profile /></ProtectedRoute> },
+            { path: "/postDetails/:id", element: <ProtectedRoute><PostDetails /></ProtectedRoute> },
+
     ],
   },
 ]);

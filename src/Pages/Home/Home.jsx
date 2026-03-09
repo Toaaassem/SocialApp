@@ -31,7 +31,10 @@ export default function Home() {
   const {data , isLoading ,isError }= useQuery(
     {
       queryKey:["getPosts"],
-      queryFn:getAllPosts
+      queryFn:getAllPosts,
+      //enabled:true default true to fetch the data when the component mounts, if false it will not fetch the data until you set it to true
+      //to fetch using a button we will use refe
+      // we can use it if i want to call the api only if the user authenticated using enabled:isauthenticated state .
     }
   );
 
@@ -55,7 +58,7 @@ console.log("data",data
   return (
     <div className="min-h-screen">
       <div className="px-3  md:w-1/2   min-h-screen mx-auto flex flex-col gap-5">
-      {allPosts?.map(post=><PostCard key={post._id} postInfo={post}/>)}
+      {allPosts?.map(post=><PostCard key={post._id} postInfo={post} isPostDetailsPage={false} />)}
 
       </div>
     </div>

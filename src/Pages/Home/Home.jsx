@@ -58,7 +58,7 @@ console.log("data",data
   return (
     <div className="min-h-screen">
       <div className="px-3  md:w-1/2   min-h-screen mx-auto flex flex-col gap-5">
-      {allPosts?.map(post=><PostCard key={post._id} postInfo={post} isPostDetailsPage={false} />)}
+      {allPosts?.map(post=><PostCard key={post._id} postInfo={post} isPostDetailsPage={false} queryKey={["getPosts"]} />)}
 
       </div>
     </div>

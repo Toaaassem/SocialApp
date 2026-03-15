@@ -48,6 +48,6 @@ const postDetails = data.data.data.post;
   console.log("DATA",data)
 
   return <div className="min-h-screen  w-1/2 mx-auto">
-    <PostCard postInfo={postDetails} isPostDetailsPage comments={comments}/>
+    <PostCard postInfo={postDetails} isPostDetailsPage comments={comments} queryKey={["postComments", id]} />
   </div>;
 }

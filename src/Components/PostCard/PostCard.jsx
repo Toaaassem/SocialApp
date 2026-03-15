@@ -13,8 +13,9 @@ import { Link } from "react-router-dom";
 import LoaderPage from "../LoaderPage/LoaderPage";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import CommentCreation from "../CommentCreation/CommentCreation";
 
-export default function PostCard({postInfo , isPostDetailsPage=false ,comments={} }) {
+export default function PostCard({postInfo , isPostDetailsPage=false ,comments={} ,queryKey }) {
     console.log(postInfo)
     const {body , image ,user ,createdAt  ,topComment ,commentsCount ,id}= postInfo;
     const {photo ,name} =user
@@ -41,6 +42,7 @@ export default function PostCard({postInfo , isPostDetailsPage=false ,comments={
         <div className="">comment</div>
         <div className="">share</div>
       </CardFooter>
+      <CommentCreation postId={id} queryKey={queryKey}/>
      {!isPostDetailsPage && <>{ commentsCount > 1 && (
         <Link to={`/postDetails/${id}`} className="text-center text-blue-500 cursor-pointer">View more comments</Link>
       )}</>} 
